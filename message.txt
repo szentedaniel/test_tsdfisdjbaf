@@ -1,0 +1,71 @@
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+class Question {
+    string text;
+    int points;
+public:
+    Question(const string& text, int points)
+        : text(text)
+        , points(points)
+    {}
+    virtual ~Question() = default;
+    virtual string getText() const { return text + '\n'; }
+    int getPoints() const { return points; }
+    void setText(const string& newtext) { text = newtext; }
+    void setPoints(int newpoints) { points = newpoints; }
+    virtual bool checkAnswer() const = 0;
+};
+
+class IntegerQ : public Question
+{
+private:
+    int valasz;
+public:
+    IntegerQ(const string& text, int valasz, int point) :valasz(valasz) { setText(text); setPoints(point); }
+    int getAnswer() 
+    {
+        return this->valasz;
+    }
+    void setAnswer(int a) 
+    {
+        this->valasz = a;
+    }
+    virtual bool checkAnswer() const override
+    {
+        int answer = 0;
+        std::cin >> answer;
+        if (answer == valasz)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+};
+int main(
+) 
+{
+    Question* q1 = new IntegerQ("How many bits are in a byte?", 8, 3);
+    cout << boolalpha;
+    cout << q1->getText() << "(" << q1->getPoints() << " pts)\n";
+    cout << q1->checkAnswer() << endl; // 4 -> false
+    q1->setText("How many bits are in an octet?");
+    q1->setPoints(2);
+    cout << q1->getText() << "(" << q1->getPoints() << " pts)\n";
+    cout << q1->checkAnswer() << endl; // 8 -> true
+    IntegerQ* iq2 = new IntegerQ("In which year was C++ standardized?", 98, 3);
+    Question* q2 = iq2;
+    cout << iq2->getText() << "(" << iq2->getPoints() << " pts) - " << iq2->getAnswer() << "\n";
+    cout << iq2->checkAnswer() << endl; // 1998 -> false
+    iq2->setAnswer(1998);
+    iq2->setPoints(4);
+    cout << q2->getText() << "(" << q2->getPoints() << " pts)\n";
+    cout << iq2->checkAnswer() << endl; // 1998 -> true
+    delete q1;
+    delete iq2;
+}
